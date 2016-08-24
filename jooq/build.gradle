@@ -1,0 +1,70 @@
+buildscript {
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath('org.jooq:jooq-codegen:3.8.1')
+    }
+}
+
+apply plugin: 'java'
+
+dependencies {
+    compile("org.springframework:spring-context")
+    compile("org.springframework:spring-jdbc")
+    compile('org.jooq:jooq:3.8.1')
+}
+
+compileJava.dependsOn += ['generateSource']
+
+ext.genSrcDir =  "${buildDir}/generated-sources/java"
+
+sourceSets {
+  main {
+    java {
+      srcDir "${genSrcDir}"
+    }
+  }
+}
+
+task generateSource(dependsOn: [':database:flywayClean',':database:flywayMigrate']) << {
+    println 'Setting up generator configuration'
+    // XML builder to construct the code generation configuration file
+    // ----------------------------------------------------------------------------------
+    def writer = new StringWriter()
+    def xml = new groovy.xml.MarkupBuilder(writer)
+    .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.8.0.xsd') {
+        jdbc() {
+            driver(project.ext['flyway.driver'])
+            url(project.ext['flyway.url'])
+            user(project.ext['flyway.user'])
+            password(project.ext['flyway.password'])
+        }
+        generator() {
+            database() {
+                includes('.*')
+                inputSchema('PUBLIC')
+                outputSchemaToDefault(true)
+            }
+            generate() {
+                pojos(true)
+                interfaces(true)
+                fluentSetters(true)
+            }
+            target() {
+                packageName("com.javcode.springboot.jooq")
+                directory(genSrcDir)
+            }
+        }
+    }
+
+    println "Generating database classes"
+    // Run the code generator
+
+    // ----------------------
+    org.jooq.util.GenerationTool.main(
+        javax.xml.bind.JAXB.unmarshal(new StringReader(writer.toString()), org.jooq.util.jaxb.Configuration.class)
+    )
+}

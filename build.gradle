@@ -5,37 +5,51 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE')
+        classpath('com.h2database:h2:1.4.185')
     }
 }
 
-repositories {
-    mavenCentral()
-    mavenLocal()
+allprojects {
+
+    apply plugin: 'eclipse'
+    ext.configDir = "${rootDir}/config"
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
 }
 
-apply plugin: 'spring-boot'
-apply plugin: 'eclipse'
 
-ext.baseVersion = "${version}"
-ext.configDir = "${rootDir}/config"
+configure(subprojects) {
 
-configurations {
-    compile.exclude module: 'spring-boot-starter-tomcat'
+    plugins.withType(JavaPlugin) {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+
+        project.apply plugin: 'io.spring.dependency-management'
+
+        project.dependencyManagement {
+            imports {
+                mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+            }
+        }
+
+    }
+
 }
 
-dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-undertow")
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    runtime('org.postgresql:postgresql:9.4.1208')
-    testCompile('commons-codec:commons-codec:1.10')
-    testCompile("org.springframework.boot:spring-boot-starter-test")
-    testCompile("org.springframework:spring-test")
-    testCompile("org.springframework.security:spring-security-test")
-    testCompile('com.jayway.jsonpath:json-path:1.2.0')
+subprojects {
+    //Needs to be in ext to configure flyway plugin
+    ext['flyway.user'] = "sa"
+    ext['flyway.password'] = ''
+    ext['flyway.driver'] = "org.h2.Driver"
+    ext['flyway.url'] = "jdbc:h2:${rootDir}/jooq/build/localdb"
+    ext['flyway.locations'] = "filesystem:${rootDir}/database/src/main/resources/db/migration"
 }
 
-bootRun {
-    jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
-    args "--spring.config.location=classpath:,file:${configDir}/local.yaml"
+
+task clean(type: Delete) {
+  delete 'build'
 }

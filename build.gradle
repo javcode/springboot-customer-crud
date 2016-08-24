@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath('io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE')
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+apply plugin: 'spring-boot'
+apply plugin: 'eclipse'
+
+ext.baseVersion = "${version}"
+ext.configDir = "${rootDir}/config"
+
+configurations {
+    compile.exclude module: 'spring-boot-starter-tomcat'
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-undertow")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    runtime('org.postgresql:postgresql:9.4.1208')
+    testCompile('commons-codec:commons-codec:1.10')
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("org.springframework:spring-test")
+    testCompile("org.springframework.security:spring-security-test")
+    testCompile('com.jayway.jsonpath:json-path:1.2.0')
+}
+
+bootRun {
+    jvmArgs '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
+    args "--spring.config.location=classpath:,file:${configDir}/local.yaml"
+}

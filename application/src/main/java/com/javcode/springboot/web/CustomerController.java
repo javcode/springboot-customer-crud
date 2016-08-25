@@ -34,13 +34,6 @@ public class CustomerController {
         this.customerDao = customerDao;
     }
 
-    @RequestMapping(method = POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public CustomerDto saveCustomer(final @RequestBody CustomerDto customerDto) {
-        Customer savedCustomer = customerDao.save(customerDto.into(new Customer()));
-        return savedCustomer.into(new CustomerDto());
-    }
-
     @RequestMapping(method = GET)
     public List<CustomerDto> getAllCustomers() {
         return customerDao.getAll().stream()
@@ -48,26 +41,34 @@ public class CustomerController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/{id}", method = GET)
+    public CustomerDto getCustomerById(final @PathVariable Long id) {
+        return customerDao.findById(id)
+                .map(c -> c.into(new CustomerDto()))
+                .orElseThrow(() -> new NotFoundException());
+    }
+
+    @RequestMapping(method = POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public CustomerDto saveCustomer(final @RequestBody CustomerDto customerDto) {
+        Customer savedCustomer = customerDao.save(customerDto.into(new Customer()));
+        return savedCustomer.into(new CustomerDto());
+    }
+
     @RequestMapping(value = "/{id}", method = PUT)
-    public CustomerDto updateCustomer(final @PathVariable Long customerId,
+    public CustomerDto updateCustomer(final @PathVariable Long id,
             final @RequestBody CustomerDto customerDto) {
-        Customer updatingCustomer = customerDao.findById(customerId).map(c -> customerDto.into(c))
+        Customer updatingCustomer = customerDao.findById(id)
+                .map(c -> customerDto.into(c))
                 .orElseThrow(() -> new NotFoundException());
         customerDao.update(updatingCustomer);
         return updatingCustomer.into(new CustomerDto());
     }
 
-    @RequestMapping(value = "/{id}", method = GET)
-    public CustomerDto getCustomerById(final @PathVariable Long id) {
-        return customerDao.findById(id)
-                    .map(c -> c.into(new CustomerDto()))
-                    .orElseThrow(() -> new NotFoundException());
-    }
-
     @RequestMapping(value = "/{id}", method = DELETE)
-    public void deleteCustomer(final @PathVariable Long customerId) {
-        customerDao.findById(customerId)
+    public void deleteCustomer(final @PathVariable Long id) {
+        customerDao.findById(id)
                 .orElseThrow(() -> new NotFoundException());
-        customerDao.delete(customerId);
+        customerDao.delete(id);
     }
 }

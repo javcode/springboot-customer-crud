@@ -40,7 +40,7 @@ public class CustomerDao {
 
     public Optional<Customer> findById(Long customerId) {
         return Optional.ofNullable(dslContext.selectFrom(CUSTOMER)
-.where(CUSTOMER.ID.eq(customerId))
+                .where(CUSTOMER.ID.eq(customerId))
                 .fetchOneInto(Customer.class));
     }
 
@@ -50,9 +50,9 @@ public class CustomerDao {
                 .fetchInto(Customer.class);
     }
 
-    public void update(final Customer customer) {
+    public int update(final Customer customer) {
         CustomerRecord updatingCustomer = customer.into(dslContext.newRecord(CUSTOMER));
-        dslContext.update(CUSTOMER)
+        return dslContext.update(CUSTOMER)
                 .set(updatingCustomer)
                 .where(CUSTOMER.ID.eq(customer.getId()))
                 .execute();

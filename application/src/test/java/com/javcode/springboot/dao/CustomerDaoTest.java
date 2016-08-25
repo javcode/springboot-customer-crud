@@ -90,6 +90,17 @@ public class CustomerDaoTest {
     }
 
     @Test
+    public void getAllShouldReturnAllCustomers() {
+        insertCustomer("noname", "address1", "12301923");
+        insertCustomer("javier", "queen st", "06546578");
+        insertCustomer("jacinto", "fort st2", "44566789");
+
+        List<Customer> result = dao.getAll();
+        assertNotNull(result);
+        assertThat(result, hasSize(3));
+    }
+
+    @Test
     public void getByNameShouldReturnMultipleCustomersMatchingByName() {
         insertCustomer("noname", "address1", "12301923");
         insertCustomer("javier", "queen st", "06546578");
@@ -141,6 +152,20 @@ public class CustomerDaoTest {
                             .setPhone(rs.getString("PHONE"));
                 });
         assertNotNull(updatedCustomer);
+    }
+
+    @Test
+    public void deleteShouldRemoveOneCustomerFromDB() {
+        Long customerId = insertCustomer("javier", "queen st", "06546578");
+        insertCustomer("javier2", "queen st 2", "065465782");
+
+        List<Customer> customers = dao.getAll();
+        assertThat(customers, hasSize(2));
+
+        dao.delete(customerId);
+
+        customers = dao.getAll();
+        assertThat(customers, hasSize(1));
     }
 
     @SuppressWarnings("rawtypes")

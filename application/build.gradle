@@ -40,7 +40,7 @@ dependencies {
     // DB
     compile("org.springframework.boot:spring-boot-starter-jdbc")
     compile("org.flywaydb:flyway-core")
-    runtime('com.h2database:h2:1.4.185')
+    compile('com.h2database:h2:1.4.185')
 
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test")

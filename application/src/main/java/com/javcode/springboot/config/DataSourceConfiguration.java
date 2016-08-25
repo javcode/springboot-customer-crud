@@ -70,7 +70,7 @@ public class DataSourceConfiguration {
     public org.jooq.Configuration jooqConfig(DataSourceConnectionProvider connectionProvider,
             ExecuteListenerProvider executeListenerProvider, Settings settings) {
         return new DefaultConfiguration().derive(connectionProvider).derive(executeListenerProvider).derive(settings)
-                .derive(SQLDialect.POSTGRES).derive(new DefaultTransactionProvider(connectionProvider));
+                .derive(SQLDialect.H2).derive(new DefaultTransactionProvider(connectionProvider));
     }
 }
 

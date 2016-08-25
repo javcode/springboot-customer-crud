@@ -4,12 +4,18 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath('io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE')
+        classpath('io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE')
         classpath('com.h2database:h2:1.4.185')
     }
 }
 
 allprojects {
+  
+}
+
+allprojects {
+
+    apply plugin: "io.spring.dependency-management"
 
     apply plugin: 'eclipse'
     ext.configDir = "${rootDir}/config"
@@ -17,6 +23,12 @@ allprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+    }
+  
+    dependencyManagement {
+        dependencies {
+            dependency 'org.jooq:jooq:3.8.4'
+        }
     }
 
 }

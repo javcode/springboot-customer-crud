@@ -40,7 +40,7 @@ dependencies {
     // DB
     compile("org.springframework.boot:spring-boot-starter-jdbc")
     compile("org.flywaydb:flyway-core")
-    runtime('org.postgresql:postgresql:9.4.1208')
+    runtime('com.h2database:h2:1.4.185')
 
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test")
@@ -51,7 +51,6 @@ dependencies {
     testCompile('com.jayway.jsonpath:json-path:1.2.0')
     testCompile('com.google.guava:guava:19.0')
 
-    testRuntime('com.h2database:h2:1.4.185')
 }
 
 bootRun {

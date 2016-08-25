@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath('org.jooq:jooq-codegen:3.8.1')
+        classpath('org.jooq:jooq-codegen:3.8.4')
     }
 }
 

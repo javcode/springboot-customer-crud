@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/javcode/springboot-customer-crud.svg?branch=master)](https://travis-ci.org/javcode/springboot-customer-crud)
+
 A simple SpringBoot CRUD webserver for Customers
 ================================================
 

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,14 +51,14 @@ public class CustomerController {
 
     @RequestMapping(method = POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerDto saveCustomer(final @RequestBody CustomerDto customerDto) {
+    public CustomerDto saveCustomer(final @Valid @RequestBody CustomerDto customerDto) {
         Customer savedCustomer = customerDao.save(customerDto.into(new Customer()));
         return savedCustomer.into(new CustomerDto());
     }
 
     @RequestMapping(value = "/{id}", method = PUT)
     public CustomerDto updateCustomer(final @PathVariable Long id,
-            final @RequestBody CustomerDto customerDto) {
+            final @Valid @RequestBody CustomerDto customerDto) {
         Customer updatingCustomer = customerDao.findById(id)
                 .map(c -> customerDto.into(c))
                 .orElseThrow(() -> new NotFoundException());

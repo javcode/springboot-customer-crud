@@ -49,6 +49,7 @@ dependencies {
     testCompile('commons-codec:commons-codec:1.10')
     testCompile("org.springframework:spring-test")
     testCompile('com.jayway.jsonpath:json-path:1.2.0')
+    testCompile('com.google.guava:guava:19.0')
 
     testRuntime('com.h2database:h2:1.4.185')
 }

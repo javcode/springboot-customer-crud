@@ -26,43 +26,30 @@ public class CustomerDao {
 
     public Customer save(Customer customer) {
         final CustomerRecord customerRecord = dslContext.newRecord(CUSTOMER);
+        customerRecord.changed(CUSTOMER.ID, false);
         customerRecord.from(customer);
         customerRecord.store();
         return customerRecord.into(new Customer());
     }
 
-    public List<Customer> findById(String customerId) {
+    public Customer findById(Long customerId) {
         return dslContext.selectFrom(CUSTOMER)
                 .where(CUSTOMER.ID.equal(customerId))
+                .fetchOneInto(Customer.class);
+    }
+
+    public List<Customer> findByName(String name) {
+        return dslContext.selectFrom(CUSTOMER)
+                .where(CUSTOMER.NAME.contains(name))
                 .fetchInto(Customer.class);
     }
 
-    public Customer insertOrUpdate(final Customer customer) {
-        if (customer.getId() == null) {
-            return insert(customer);
-        } else {
-            return update(customer);
-        }
-    }
-
-    private Customer insert(final Customer customer) {
-        CustomerRecord newCustomer = customer.into(dslContext.newRecord(CUSTOMER));
-        newCustomer.changed(CUSTOMER.ID, false);
-        return dslContext.insertInto(CUSTOMER)
-                .set(newCustomer)
-                .returning()
-                .fetchOne()
-                .into(new Customer());
-    }
-
-    private Customer update(final Customer customer) {
+    public void update(final Customer customer) {
         CustomerRecord updatingCustomer = customer.into(dslContext.newRecord(CUSTOMER));
-        return dslContext.update(CUSTOMER)
+        dslContext.update(CUSTOMER)
                 .set(updatingCustomer)
                 .where(CUSTOMER.ID.eq(customer.getId()))
-                .returning()
-                .fetchOne()
-                .into(new Customer());
+                .execute();
     }
 
 }

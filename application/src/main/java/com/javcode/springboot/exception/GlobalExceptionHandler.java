@@ -1,7 +1,9 @@
 package com.javcode.springboot.exception;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,4 +20,10 @@ public class GlobalExceptionHandler {
         return new JsonException(e);
     }
 
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    public JsonException invalidArgument(final MethodArgumentNotValidException e) {
+        return new JsonException(e);
+    }
 }

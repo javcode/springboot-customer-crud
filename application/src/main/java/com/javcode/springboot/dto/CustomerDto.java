@@ -12,17 +12,18 @@ public class CustomerDto implements ICustomer {
 
     private Long id;
 
-    @NotNull
-    @Size(min = 2, max = 255, message = "Name length must be between 2 and 255 characters")
+    @NotNull(message = "name property is required")
+    @Pattern(regexp = "^[a-z ,.'-]+$", message = "Only letters, dots, apostrophes or dashes are allowed")
+    @Size(min = 2, max = 255, message = "name length must be between 2 and 255 characters")
     private String name;
 
-    @NotNull
-    @Size(min = 2, max = 255, message = "Address length must be between 2 and 255 characters")
+    @NotNull(message = "address property is required")
+    @Size(min = 2, max = 255, message = "address length must be between 2 and 255 characters")
     private String address;
 
-    @NotNull
+    @NotNull(message = "phone property is required")
     @Pattern(regexp = "^([0-9\\(\\)\\/\\+ \\-]*)$", message = "Only numbers, + and - signs are allowed")
-    @Size(min = 6, max = 30, message = "Phone number length must be between 6 and 30 characters")
+    @Size(min = 6, max = 30, message = "phone number length must be between 6 and 30 characters")
     private String phone;
 
     @Override

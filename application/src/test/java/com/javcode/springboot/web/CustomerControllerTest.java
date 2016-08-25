@@ -1,5 +1,6 @@
 package com.javcode.springboot.web;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -230,5 +232,88 @@ public class CustomerControllerTest {
                 .andExpect(status().isOk());
 
         verify(customerDao).delete(customerId);
+    }
+
+    @Test
+    public void validationShouldRejectNameIfNull() throws Exception {
+        CustomerDto customerDto = new CustomerDto()
+            .setAddress("address")
+            .setPhone("0212146");
+
+        String jsonContent = new ObjectMapper().writeValueAsString(customerDto);
+
+        mockMvc.perform(post("/customers")
+                    .contentType(APPLICATION_JSON)
+                    .content(jsonContent))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("name property is required")));
+    }
+
+    @Test
+    public void validationShouldRejectNameIfTooShort() throws Exception {
+        CustomerDto customerDto = new CustomerDto()
+            .setName("a")
+            .setAddress("address")
+            .setPhone("0212146");
+
+        String jsonContent = new ObjectMapper().writeValueAsString(customerDto);
+
+        mockMvc.perform(post("/customers")
+                    .contentType(APPLICATION_JSON)
+                    .content(jsonContent))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("name length must be between")));
+    }
+
+    @Test
+    public void validationShouldRejectNameIfTooLong() throws Exception {
+        StringBuilder longNameBuilder = new StringBuilder();
+        for (int i = 0; i < 300; i++) {
+            longNameBuilder.append('a');
+        }
+        CustomerDto customerDto = new CustomerDto()
+            .setName(longNameBuilder.toString())
+            .setAddress("address")
+            .setPhone("0212146");
+
+        String jsonContent = new ObjectMapper().writeValueAsString(customerDto);
+
+        mockMvc.perform(post("/customers")
+                    .contentType(APPLICATION_JSON)
+                    .content(jsonContent))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("name length must be between")));
+    }
+
+    @Test
+    public void validationShouldRejectNameWithInvalidCharacters() throws Exception {
+        CustomerDto customerDto = new CustomerDto()
+            .setName("name with invalid characters 4$")
+            .setAddress("address")
+            .setPhone("0212146");
+
+        String jsonContent = new ObjectMapper().writeValueAsString(customerDto);
+
+        mockMvc.perform(post("/customers")
+                    .contentType(APPLICATION_JSON)
+                    .content(jsonContent))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Only letters")));
+    }
+
+    @Test
+    public void validationShouldRejectPhoneWithInvalidFormat() throws Exception {
+        CustomerDto customerDto = new CustomerDto()
+            .setName("valid name")
+            .setAddress("address")
+            .setPhone("0212146abcdefg");
+
+        String jsonContent = new ObjectMapper().writeValueAsString(customerDto);
+
+        mockMvc.perform(post("/customers")
+                    .contentType(APPLICATION_JSON)
+                    .content(jsonContent))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Only numbers")));
     }
 }

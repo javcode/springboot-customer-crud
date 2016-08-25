@@ -33,9 +33,14 @@ public class CustomerDao {
         return customerRecord.into(new Customer());
     }
 
+    public List<Customer> getAll() {
+        return dslContext.selectFrom(CUSTOMER)
+                .fetchInto(Customer.class);
+    }
+
     public Optional<Customer> findById(Long customerId) {
         return Optional.ofNullable(dslContext.selectFrom(CUSTOMER)
-                .where(CUSTOMER.ID.equal(customerId))
+.where(CUSTOMER.ID.eq(customerId))
                 .fetchOneInto(Customer.class));
     }
 
@@ -53,4 +58,9 @@ public class CustomerDao {
                 .execute();
     }
 
+    public int delete(final Long customerId) {
+        return dslContext.deleteFrom(CUSTOMER)
+            .where(CUSTOMER.ID.eq(customerId))
+            .execute();
+    }
 }

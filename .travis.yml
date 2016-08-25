@@ -1,11 +1,18 @@
 language: java
 jdk:
-  - oraclejdk8
-  - openjdk8
+- oraclejdk8
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+before_deploy: echo 'Deploying to github releases'
+deploy:
+  provider: releases
+  api_key:
+    secure: YSp6FWpgNMD5N08rjMtqjeoiePqAiqjdxYmAl75BVyxeeVFrUTzqGBg7pteUHUEdQ86o/Hkdr/GHg/Mc6R37YLycIGZUch33Gu1gQBAd9lF/6oTwJ4Xd7WpRA77Z8r3gWDNT7rpuGRT7VmdLZskElN8fDD0vbQjD5QTCUMkapbX4YRJ9CpVq1g18oLvw392tVZ1/L6wwrmN75lL01d2+MzYkjU9CoH/43oHRTYqU+ctTl/pkgYVR9Vp7gvH9BLyUgbgqX1emvQYwRPj/7Medkd0UFnipiaPO04uE44HxN1MPd3t/zX02QcihHHFwHXTjyAfCWQjC2OlPoi523BLQIv5J8ou6Pamk7H+2baEYCCNXz+yxLdnlj9H84KsyQ4uxHlsuLPzIIVFLNrkt89v8MkjK3FuAHX8a0whuCUmQCiLlDBVzTr6FoDhFVcDGRIL9H0rnXWUNikdwKOQN8JEapQTHST9lp40L4dvm7vKLbwV/ef4XyiyS591QKmiV/A2yEujyg+zBSll2RZ710O4fBxppYYpaOKRqBZ8RO+Ebm46erqW8TVIEhBy7FBzyZ6CAFm+eVhns7JIZ1N74bUczw1Sg81U2Msad4cQbGAs4zwkk3Wyd2SNsnyua36KLJeC6wMv3U/fNUxOUudnKSarH9eOStjDWoNO85OeVRyvkjJQ=
+  file: "./application/build/lib/application-*.jar"
+  on:
+    repo: javcode/springboot-customer-crud

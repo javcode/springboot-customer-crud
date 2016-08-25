@@ -84,7 +84,7 @@ public class CustomerControllerTest {
         CustomerDto customerDto = new CustomerDto()
             .setName("name")
             .setAddress("address")
-            .setPhone("02121");
+            .setPhone("0212146");
         Long customerId = 10L;
 
         String jsonContent = new ObjectMapper().writeValueAsString(customerDto);
@@ -102,7 +102,7 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("id", is(customerId.intValue())))
                 .andExpect(jsonPath("name", is("name")))
                 .andExpect(jsonPath("address", is("address")))
-                .andExpect(jsonPath("phone", is("02121")));
+                .andExpect(jsonPath("phone", is("0212146")));
     }
 
     @Test
@@ -111,12 +111,12 @@ public class CustomerControllerTest {
             .setId(10L)
             .setName("name")
             .setAddress("address")
-            .setPhone("02121");
+            .setPhone("0212146");
         CustomerDto customerDto2 = new CustomerDto()
             .setId(22L)
             .setName("name 2")
             .setAddress("address 2")
-            .setPhone("021212");
+            .setPhone("02121462");
 
         when(customerDao.getAll()).thenReturn(Arrays.asList(customerDto1, customerDto2).stream()
                 .map(c -> c.into(new Customer()))
@@ -144,7 +144,7 @@ public class CustomerControllerTest {
             .setId(customerId)
             .setName("name")
             .setAddress("address")
-            .setPhone("02121");
+            .setPhone("0212146");
 
         when(customerDao.findById(customerId)).thenReturn(Optional.of(customer));
 
@@ -168,7 +168,7 @@ public class CustomerControllerTest {
             .setId(customerId)
             .setName("name")
             .setAddress("address")
-            .setPhone("02121");
+            .setPhone("0212146");
     
         String jsonContent = new ObjectMapper().writeValueAsString(customerDto);
         when(customerDao.findById(customerId)).thenReturn(Optional.empty());
@@ -188,7 +188,7 @@ public class CustomerControllerTest {
             .setId(customerId)
             .setName("updated name")
             .setAddress("address")
-            .setPhone("02121");
+            .setPhone("0212146");
 
         String jsonContent = new ObjectMapper().writeValueAsString(customerDto);
 
@@ -222,7 +222,7 @@ public class CustomerControllerTest {
             .setId(customerId)
             .setName("deleted name")
             .setAddress("address")
-            .setPhone("02121");
+            .setPhone("0212146");
 
         when(customerDao.findById(customerId)).thenReturn(Optional.of(customer));
 

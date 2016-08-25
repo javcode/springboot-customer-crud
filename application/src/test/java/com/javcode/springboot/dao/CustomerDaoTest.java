@@ -1,6 +1,7 @@
 package com.javcode.springboot.dao;
 
 import static com.javcode.springboot.jooq.tables.Customer.CUSTOMER;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -9,6 +10,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -17,7 +19,7 @@ import org.jooq.Field;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -25,7 +27,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.javcode.springboot.jooq.tables.pojos.Customer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = TestPersistenceConfiguration.class)
+@SpringApplicationConfiguration(classes = TestPersistenceConfiguration.class)
 public class CustomerDaoTest {
 
     @Inject
@@ -64,11 +66,12 @@ public class CustomerDaoTest {
     public void getByIdShouldReturnCustomerInDB() {
         Long savedId = insertCustomer("customer", "address", "12301923");
 
-        Customer result = dao.findById(savedId);
-        assertNotNull(result);
-        assertThat(result.getName(), is("customer"));
-        assertThat(result.getAddress(), is("address"));
-        assertThat(result.getPhone(), is("12301923"));
+        Optional<Customer> result = dao.findById(savedId);
+        assertThat(result.isPresent(), equalTo(true));
+        Customer customer = result.get();
+        assertThat(customer.getName(), is("customer"));
+        assertThat(customer.getAddress(), is("address"));
+        assertThat(customer.getPhone(), is("12301923"));
     }
 
     @Test
@@ -122,7 +125,9 @@ public class CustomerDaoTest {
     public void updateShouldSetTheNewFieldsInTheDB() {
         Long savedId = insertCustomer("javier", "queen st", "06546578");
 
-        Customer customer = dao.findById(savedId);
+        Optional<Customer> result = dao.findById(savedId);
+        assertThat(result.isPresent(), equalTo(true));
+        Customer customer = result.get();
         customer.setName("javier durante");
         dao.update(customer);
 

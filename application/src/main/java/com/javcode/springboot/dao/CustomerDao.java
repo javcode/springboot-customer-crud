@@ -4,6 +4,7 @@ package com.javcode.springboot.dao;
 import static com.javcode.springboot.jooq.tables.Customer.CUSTOMER;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -32,10 +33,10 @@ public class CustomerDao {
         return customerRecord.into(new Customer());
     }
 
-    public Customer findById(Long customerId) {
-        return dslContext.selectFrom(CUSTOMER)
+    public Optional<Customer> findById(Long customerId) {
+        return Optional.ofNullable(dslContext.selectFrom(CUSTOMER)
                 .where(CUSTOMER.ID.equal(customerId))
-                .fetchOneInto(Customer.class);
+                .fetchOneInto(Customer.class));
     }
 
     public List<Customer> findByName(String name) {
